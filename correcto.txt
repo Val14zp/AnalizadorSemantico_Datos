@@ -1,6 +1,7 @@
 int x = 40
 
 void funcion( string n , int v ) {
+    x = x / 0
     if ( v > 0.0 ) {
        n = "Mayor"
        x = x + 5
