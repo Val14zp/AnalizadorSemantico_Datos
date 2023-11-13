@@ -12,6 +12,24 @@ class TablaSimbolos:
         self.bloques = {'{': "{", '}': "}"}
         self.table = {}
 
+    @staticmethod
+    def esString(s):
+        if s == '':
+            return False
+        return (s[0] == '"' and s[-1] == '"') or (s[0] == "'" and s[-1] == "'")
+
+    @staticmethod
+    def esNumero(n):
+        return n.replace('.', '', 1).isdigit()
+
+    @staticmethod
+    def es_flotante(variable):
+        try:
+            float(variable)
+            return True
+        finally:
+            return False
+
     def insertar(self, variable):
         """Inserta el objeto variable a la tabla de simbolos usando una funcion hash."""
         hash_value = hash(variable.nombre)
@@ -34,6 +52,7 @@ class TablaSimbolos:
         return palabra in self.tiposDatos
 
     def procesar_lineas(self, lista):
+        variable_sin_declarar = {}
         """Procesa las listas de palabras de cada una de las lineas leidas del archivo y si son declaraciones o parametros las inserta en la tabla de simbolos como Variables."""
         for palabras in lista:
             i = 0
@@ -61,7 +80,13 @@ class TablaSimbolos:
                         print("Error: Falta el nombre de la variable después del tipo.")
                         break
                 else:
+                    """Revisa si ya la palabra se encontraba entre las palabras sin reservar."""
+
+                    sin_declarar = variable_sin_declarar.get(hash(palabra), None)
                     """Se mueve a la proxima palabra."""
+                    if not self.buscar(palabra) and not sin_declarar and palabra not in self.reservada and palabra not in self.matematicos and palabra not in self.comparacion and palabra not in self.parentesis and palabra not in self.bloques and not self.esNumero(palabra) and not self.esString(palabra):
+                        print(f"Error: La variable '{palabra}' no se encuentra declarada.")
+                        variable_sin_declarar[hash(palabra)] = palabra
                     i += 1
 
     def buscar_variable_en_tabla_simbolos(self, nombre_variable):

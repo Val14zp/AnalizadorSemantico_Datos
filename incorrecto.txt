@@ -1,5 +1,5 @@
 
-int x = 40
+ x = 40
 
 int funcion ( float v , string n ) {
     if ( v > 0.0 ) {
