@@ -8,12 +8,15 @@ class TablaSimbolos:
         self.tiposDatos = {'void': "void", 'int': "int", 'float': "float", 'string': "string"}
         self.reservada = {'if': "if", 'while': "while", 'return': "return"}
         self.matematicos = {'+': "+", '-': "-", ';': ";", '*': "*", ',': ",", '/': "/", '=': "="}
-        self.comparacion = {'==': "==", '!=': "!=",'<': "<", '>': ">"}
+        self.comparacion = {'==': "==", '!=': "!=", '<': "<", '>': ">"}
         self.parentesis = {'(': "(", ')': ")"}
         self.bloques = {'{': "{", '}': "}"}
         self.table = {}
+        self.funcion = {}
+        self.estructura = {}
         self.variables_sin_declarar = {}
-        self.variable_mal_iniciaizada = {}
+        self.variables_mal_iniciaizadas = {}
+        self.pila = []
     @staticmethod
     def esString(s):
         if s == '':
@@ -77,10 +80,26 @@ class TablaSimbolos:
         hash_value = hash(variable.nombre)
         self.table[hash_value] = variable
 
+    def insertarFuncion(self, variable):
+        """Inserta el objeto variable a la tabla de funciones para tener control de su espacio permitido usando una funcion hash."""
+        hash_value = hash(variable.nombre)
+        self.funcion[hash_value] = variable
+
+    def insertar_Estructura_Dentro_Funcion(self, variable):
+        """Inserta el objeto variable a una tabla para limitar su uso dentro del programa en caso de que este dentro de una funcion usando una funcion hash."""
+        hash_value = hash(variable.nombre)
+        self.estructura[hash_value] = variable
+
     def buscar(self, nombre):
         """Busca un objeto utilizando su nombre como key."""
         hash_value = hash(nombre)
         variable = self.table.get(hash_value, None)
+        return variable
+
+    def buscar_en_Funcion(self, nombre):
+        """Busca un objeto utilizando su nombre como key."""
+        hash_value = hash(nombre)
+        variable = self.funcion.get(hash_value, None)
         return variable
 
     def eliminar(self, nombre):
@@ -118,7 +137,13 @@ class TablaSimbolos:
                         if valor is not None:
                             self.revisa_inicializacion_variables(variable)
 
-                        self.insertar(variable)
+                        if self.pila:
+                            if self.pila[-1] == '(' or self.pila[-1] == '{':
+                                self.insertarFuncion(variable)
+                            elif self.pila[-2] == '{' or self.pila[-1] == '{':
+                                self.insertar_Estructura_Dentro_Funcion(variable)
+                        else:
+                            self.insertar(variable)
                     else:
                         """Error de sintaxis."""
                         print("Error: Falta el nombre de la variable después del tipo.")
@@ -126,6 +151,29 @@ class TablaSimbolos:
                 else:
                     """Revisa si ya la palabra se encontraba entre las palabras sin reservar."""
 
+                    """Revisa si es una llave de función o para poder llamar parámetros"""
+                    if palabra in self.bloques.keys() or palabra in self.parentesis.keys():
+                        if self.pila:
+                            """Revisa si hay pila por lo que ya habría una llave anteriormente declarada"""
+                            if self.pila[-1] == '{' and palabra == '{':
+                                """Con esto podemos saber si es una estructura (Condicional, bucle dentro de una 
+                                funcion)"""
+                                self.pila.append(palabra)
+                            if len(self.pila) >= 2:
+                                if palabra == '}'and self.pila[-2] == '}':
+                                    """Si la palabra es una llave de cerradura y todavia queda otra es porque cerramos el 
+                                    bloque de la estructura y esos datos ya no son alcanzables fuera de"""
+                                    self.estructura.clear()
+                                    self.pila.pop()
+                            elif palabra == '}':
+                                """Esto quiere decir que cerramos la funcion y por ente las variables o demás deben 
+                                ser erradicadas"""
+                                self.funcion.clear()
+                                self.pila.pop()
+                            else:
+                                self.pila.pop()
+                        else:
+                            self.pila.append(palabra)
 
                     #To do: revisar si al retornar se está retornando correctamente la variable
                     if not self.revisa_declaracion_variables(palabra):
@@ -136,7 +184,12 @@ class TablaSimbolos:
     def buscar_variable_en_tabla_simbolos(self, nombre_variable):
         """Busca una variable por nombre en la tabla de simbolos creada"""
         variable = self.buscar(nombre_variable)
+        variable_en_funcion = self.buscar_en_Funcion(nombre_variable)
         if variable:
+            print(f"Información de la variable '{nombre_variable}':")
+            print(f"Tipo: {variable.tipo}")
+            print(f"Valor: {variable.valor}")
+        elif variable_en_funcion:
             print(f"Información de la variable '{nombre_variable}':")
             print(f"Tipo: {variable.tipo}")
             print(f"Valor: {variable.valor}")
