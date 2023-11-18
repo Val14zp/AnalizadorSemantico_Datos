@@ -61,20 +61,27 @@ class TablaSimbolos:
     def coincide_tipo_dato_con_valor(self, variable):
         """Revisa si el tipo de dato coincide con el valor."""
         variable = self.buscar(variable)
-        if variable.tipo == "int" and not self.esNumero(variable.valor):
-            print(f"Error: El tipo de dato '{variable.tipo}' no coincide con el valor '{variable.valor}'.")
-            return False
-        elif variable.tipo == "float" and not self.es_flotante(variable.valor):
-            print(f"Error: El tipo de dato '{variable.tipo}' no coincide con el valor '{variable.valor}'.")
-            return False
-        elif variable.tipo == "string" and not self.esString(variable.valor):
-            print(f"Error: El tipo de dato '{variable.tipo}' no coincide con el valor '{variable.valor}'.")
-            return False
+        if variable is not None:
+            if variable.tipo == "int" and not self.esNumero(variable.valor):
+                print(
+                    f"Error: En la variable '{variable.nombre}' el tipo de dato '{variable.tipo}' no coincide con el valor '{variable.valor}'.")
+                return False
+            elif variable.tipo == "float" and not self.es_flotante(variable.valor):
+                print(
+                    f"Error: En la variable '{variable.nombre}' el tipo de dato '{variable.tipo}' no coincide con el valor '{variable.valor}'.")
+                return False
+            elif variable.tipo == "string" and not self.esString(variable.valor):
+                print(
+                    f"Error: En la variable '{variable.nombre}' el tipo de dato '{variable.tipo}' no coincide con el valor '{variable.valor}'.")
+                return False
 
     def revisa_inicializacion_variables(self, variable):
         """Revisa si la variable está inicializada."""
+
         if not self.coincide_tipo_dato_con_valor(variable):
+            variable = self.buscar(variable)
             self.variable_mal_iniciaizada[hash(variable.nombre)] = variable
+
     def insertar(self, variable):
         """Inserta el objeto variable a la tabla de simbolos usando una funcion hash."""
         hash_value = hash(variable.nombre)
@@ -237,6 +244,29 @@ class TablaSimbolos:
 
                     #To do: revisar si al retornar se está retornando correctamente la variable
                     i += 1
+    def analizar_expresion(self, expresion):
+        """
+        Analiza la expresión aritmética o de concatenación y devuelve el resultado y el tipo.
+        """
+        try:
+            # Utiliza la biblioteca 'ast' para evaluar la expresión
+            nodo = ast.parse(expresion, mode='eval')
+            resultado = eval(compile(nodo, '<string>', 'eval'))
+
+            # Determina el tipo del resultado
+            tipo_resultado = None
+            if isinstance(resultado, int):
+                tipo_resultado = 'int'
+            elif isinstance(resultado, float):
+                tipo_resultado = 'float'
+            elif isinstance(resultado, str):
+                tipo_resultado = 'string'
+
+            return resultado, tipo_resultado
+
+        except (SyntaxError, TypeError, NameError) as e:
+            print(f"Error: No se puede evaluar la expresión '{expresion}': {e}")
+            return None, None
 
     def buscar_variable_en_tabla_simbolos(self, nombre_variable):
         """Busca una variable por nombre en la tabla de simbolos creada"""
