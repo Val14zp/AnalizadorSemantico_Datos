@@ -130,12 +130,28 @@ class TablaSimbolos:
                         if palabras[i] == "=":
                             i += 1
                             valor = palabras[i]
+                            variable_a_asignar = self.buscar(valor)
+                            if variable_a_asignar:
+                                valor = variable_a_asignar.valor
+                            else:
+                                print(f"Error: Variable '{valor}' no declarada.")
+                                break
+                            # Realizar el análisis de la expresión aritmética o concatenación
+                            resultado, tipo_resultado = self.analizar_expresion(valor)
+                            valor = resultado
+                            # Verificar la coincidencia de tipos
+                            if tipo != tipo_resultado:
+                                print(f"Error: Tipo de dato '{tipo}' no coincide con el valor '{resultado}'.")
+                                break
+
                         else:
                             valor = None
-                            """Inserta la variable en la tabla de simbolos."""
-                        variable = Variable.Variable(tipo, nombre, valor)
+
+                        variable = Variable(tipo, nombre, valor)
+                        self.insertar(variable)
+
                         if valor is not None:
-                            self.revisa_inicializacion_variables(variable)
+                            self.revisa_inicializacion_variables(palabra)
 
                         if self.pila:
                             if self.pila[-1] == '(' or self.pila[-1] == '{':
@@ -175,10 +191,51 @@ class TablaSimbolos:
                         else:
                             self.pila.append(palabra)
 
+                    """ Revisa si la palabra ya se encontraba entre las palabras sin reservar."""
+                    if not self.es_reservada(palabra) and not self.es_operador(palabra) and not self.esString(
+                            palabra) and not self.esNumero(palabra) and not self.es_flotante(palabra):
+                        variable = self.buscar(palabra)
+                        if self.revisa_declaracion_variables(palabra):
+                            if variable is not None:
+                                i += 1
+                                if i < len(palabras) and palabras[i] == "=":
+                                    i += 1
+                                    siguientePalabra = self.buscar(palabras[i])
+                                    if siguientePalabra:
+                                        valor = siguientePalabra.valor
+                                    else:
+                                        valor = palabras[i]
+                                    variable.valor = valor
+                                else:
+                                    valor = None
+
+                                variable_a_asignar = self.buscar(valor)
+                                if variable_a_asignar:
+                                    valor = variable_a_asignar.valor
+                                elif variable_a_asignar is None and not isinstance(valor, int):
+                                    print(f"Error: Variable '{valor}' no declarada.")
+                                    break
+                                # Realizar el análisis de la expresión aritmética o concatenación
+                                resultado, tipo_resultado = self.analizar_expresion(valor)
+                                valor = resultado
+                                # Verificar la coincidencia de tipos
+                                if tipo != tipo_resultado:
+                                    print(f"Error: Tipo de dato '{tipo}' no coincide con el valor '{resultado}'.")
+                                    break
+
+                            else:
+                                valor = None
+
+                            variable = Variable(tipo, nombre, valor)
+                            self.insertar(variable)
+
+                            if valor is not None:
+                                self.revisa_inicializacion_variables(palabra)
+
+                                if valor is not None:
+                                    self.revisa_inicializacion_variables(palabra)
+
                     #To do: revisar si al retornar se está retornando correctamente la variable
-                    if not self.revisa_declaracion_variables(palabra):
-                        if self.buscar(palabra):
-                            self.revisa_inicializacion_variables(self.buscar(palabra))
                     i += 1
 
     def buscar_variable_en_tabla_simbolos(self, nombre_variable):
