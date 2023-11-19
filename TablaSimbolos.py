@@ -13,6 +13,8 @@ class TablaSimbolos:
         self.ignorar = {';': ";", ',': ","}
         self.table = {}
 
+        #Debe lanzar un error si trata de insertar una variable que ya esta
+
     def insertar(self, variable):
         """
         Inserta el objeto variable a la tabla de simbolos usando una funcion hash.
