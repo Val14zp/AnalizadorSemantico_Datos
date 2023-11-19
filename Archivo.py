@@ -18,8 +18,7 @@ class Archivo:
                 palabras_por_linea = []
 
                 for linea in lineas:
-                    #Esta linea corrige la lectura con ',' en las varibles
-                    palabras = [palabra.strip(",") for palabra in linea.split()]
+                    palabras = linea.replace(',', ' ').split()
                     palabras_por_linea.append(palabras)
 
                 return palabras_por_linea

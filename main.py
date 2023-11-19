@@ -6,7 +6,7 @@ def main():
     print("Este es el programa principal.")
     symbol_table = TablaSimbolos.TablaSimbolos()
 
-    nombre_archivo = "incorrecto.txt"  
+    nombre_archivo = "incorrecto.txt"
     archivo = Archivo.Archivo(nombre_archivo)
     archivo.ver_listas_palabras()
     symbol_table.procesar_lineas(archivo.leer_y_dividir_lineas())
