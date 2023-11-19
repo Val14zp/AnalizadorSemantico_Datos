@@ -1,6 +1,6 @@
 int x = 40
 
-void funcion ( string n , int v , float w ) {
+void funcion ( string n, int v , float w ) {
     x = x / 0
     if ( v > 0.0 ) {
        n = "Mayor"

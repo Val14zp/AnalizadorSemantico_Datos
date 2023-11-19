@@ -18,6 +18,9 @@ def main():
     symbol_table.buscar_variable_en_tabla_simbolos("w")
     symbol_table.buscar_variable_en_tabla_simbolos("prueba")
 
+    symbol_table.imprimir("x")
+    symbol_table.imprimir("z")
+
     symbol_table.eliminar("x")
     symbol_table.eliminar("s")
     symbol_table.eliminar("funcion")
