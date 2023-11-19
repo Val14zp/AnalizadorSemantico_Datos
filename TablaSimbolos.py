@@ -30,7 +30,7 @@ class TablaSimbolos:
     def buscar(self, nombre):
         """
         Busca un objeto utilizando su nombre como key.
-        Recibe como argumento un string nombre que se utiliza como key.
+        Recibe como argumento un string que se utiliza como key.
         Retorna un objeto Variable
         """
         hash_value = hash(nombre)
@@ -40,7 +40,7 @@ class TablaSimbolos:
     def modificar(self, nombre, nuevo_valor):
         """
         Modifica el valor de una variable en la tabla de símbolos, para eso utiliza la funcion buscar.
-        Recibe como argumento un string nombre que se utiliza como key y el nuevo valor para modificar.
+        Recibe como argumento un string que se utiliza como key y el nuevo valor para modificar.
         Retorna true en caso de que se haga la modificacion y False en caso contrario.
         """
         variable = self.buscar(nombre)
@@ -55,7 +55,7 @@ class TablaSimbolos:
     def obtener_valor(self, nombre):
         """
         Obtiene el valor de una variable en la tabla de símbolos.
-        Recibe como argumento un string nombre que se utiliza como key.
+        Recibe como argumento un string que se utiliza como key.
         Retorna el valor de la variable y None en caso contrario.
         """
         variable = self.buscar(nombre)
@@ -67,7 +67,7 @@ class TablaSimbolos:
     def obtener_tipo(self, nombre):
         """
         Obtiene el tipo de una variable en la tabla de símbolos.
-        Recibe como argumento un string nombre que se utiliza como key.
+        Recibe como argumento un string y el nuevo valor para modificar.
         Retorna el tipo de la variable y None en caso contrario.
         """
         variable = self.buscar(nombre)
@@ -139,8 +139,5 @@ class TablaSimbolos:
             print(f"La variable '{nombre_variable}' no se encontró en la tabla de símbolos.")
 
     def imprimir(self, nombre_variable):
-        """
-        Busca una variable por nombre en la tabla de simbolos creada.
-        Recibe como argumento un string nombre_variable.
-        """
+        """Busca una variable por nombre en la tabla de simbolos creada"""
         print(f"Valor: {self.obtener_valor(nombre_variable)}")
