@@ -158,8 +158,8 @@ class TablaSimbolos:
                             if tipo != tipo_resultado:
                                 print(f"Error: Tipo de dato '{tipo}' no coincide con el valor '{resultado}'.")
                                 break
-
                         else:
+                            i -= 1
                             valor = None
 
                         variable = Variable(tipo, nombre, valor)
@@ -236,6 +236,15 @@ class TablaSimbolos:
                                 self.revisa_inicializacion_variables(palabra)
 
                 i += 1
+
+        self.finalizar_programa(self.pila)
+
+    @staticmethod
+    def finalizar_programa(pila):
+        # Verifica si la pila tiene solo un elemento y no es una llave de cerradura '}'
+        if len(pila) == 1:
+            print("Error: Falta la llave de cerradura '}'")
+
 
     def analizar_expresion(self, expresion):
         """
