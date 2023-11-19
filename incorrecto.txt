@@ -1,9 +1,10 @@
 
-int x = 40
+ int x
+ x = 40
 
 int funcion ( float v , string n ) {
+    n = 3
     if ( v > 0.0 ) {
-        n = "Mayor"
         x = x / 0
     }
     return n
