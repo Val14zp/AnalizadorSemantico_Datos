@@ -1,4 +1,3 @@
-import AnalizadorSemantico
 import TablaSimbolos
 import Archivo
 
@@ -10,6 +9,7 @@ def main():
     archivo = Archivo.Archivo(nombre_archivo)
     archivo.ver_listas_palabras()
     symbol_table.procesar_lineas(archivo.leer_y_dividir_lineas())
+    """
     symbol_table.buscar_variable_en_tabla_simbolos("x")
     symbol_table.buscar_variable_en_tabla_simbolos("s")
     symbol_table.buscar_variable_en_tabla_simbolos("funcion")
@@ -25,6 +25,8 @@ def main():
     symbol_table.eliminar("v")
     symbol_table.eliminar("w")
     symbol_table.eliminar("prueba")
+    """
+
 
 if __name__ == "__main__":
     main()
