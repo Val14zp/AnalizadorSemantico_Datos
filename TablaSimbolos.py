@@ -177,6 +177,8 @@ class TablaSimbolos:
                         print("Error: Falta el nombre de la variable después del tipo.")
                         break
                 else:
+                    if palabra == '()':
+                        break
 
                     """Revisa si es una llave de función o para poder llamar parámetros"""
                     if palabra in self.bloques.keys() or palabra in self.parentesis.keys():
