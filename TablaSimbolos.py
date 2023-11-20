@@ -169,8 +169,7 @@ class TablaSimbolos:
                                 self.insertarFuncion(variable)
                             elif self.pila[-2] == '{' or self.pila[-1] == '{':
                                 self.insertar_Estructura_Dentro_Funcion(variable)
-                        else:
-                            self.insertar(variable)
+                        self.insertar(variable)
 
                         if valor is not None:
                             self.revisa_inicializacion_variables(palabra)
@@ -183,15 +182,19 @@ class TablaSimbolos:
                     """Revisa si es una llave de función o para poder llamar parámetros"""
                     if palabra in self.bloques.keys() or palabra in self.parentesis.keys():
                         if self.pila:
-                            if self.pila[-1] == '{' and palabra == '{':
+                            if (self.pila[-1] == '{' and palabra == '{') or (self.pila[-1] == '{' and palabra == '('):
                                 self.pila.append(palabra)
-                            if len(self.pila) >= 2:
+                            elif len(self.pila) >= 2:
                                 if palabra == '}' and self.pila[-2] == '}':
+                                    self.eliminar_elementos(self.table, self.estructura)
                                     self.estructura.clear()
                                     self.pila.pop()
-                            elif palabra == '}':
-                                self.funcion.clear()
-                                self.pila.pop()
+                                elif palabra == '}':
+                                    self.eliminar_elementos(self.table, self.funcion)
+                                    self.funcion.clear()
+                                    self.pila.pop()
+                                else:
+                                    self.pila.pop()
                             else:
                                 self.pila.pop()
                         else:
@@ -211,14 +214,16 @@ class TablaSimbolos:
                                         valor = palabras[i]
                                     variable.valor = valor
                                 else:
+                                    i -= 1
                                     valor = None
 
                                 variable_a_asignar = self.buscar(valor)
                                 if variable_a_asignar:
                                     valor = variable_a_asignar.valor
                                 elif variable_a_asignar is None and not isinstance(valor, int):
-                                    print(f"Error: Variable '{valor}' no declarada.")
-                                    break
+                                    """print(f"Error: Variable '{valor}' no declarada.")
+                                    break"""
+
 
                                 # Realizar el análisis de la expresión aritmética o concatenación
                                 resultado, tipo_resultado = self.analizar_expresion(valor)
@@ -226,8 +231,8 @@ class TablaSimbolos:
 
                                 # Verificar la coincidencia de tipos
                                 if tipo != tipo_resultado:
-                                    print(f"Error: Tipo de dato '{tipo}' no coincide con el valor '{resultado}'.")
-                                    break
+                                    """print(f"Error: Tipo de dato '{tipo}' no coincide con el valor '{resultado}'.")
+                                    break"""
 
                             else:
                                 valor = None
@@ -238,13 +243,27 @@ class TablaSimbolos:
                 i += 1
 
         self.finalizar_programa(self.pila)
+    @staticmethod
+    def eliminar_elementos(A, B):
+        for clave_B, valor_B in B.items():
+            if clave_B in A and A[clave_B] == valor_B:
+                del A[clave_B]
 
     @staticmethod
     def finalizar_programa(pila):
-        # Verifica si la pila tiene solo un elemento y no es una llave de cerradura '}'
-        if len(pila) == 1:
-            print("Error: Falta la llave de cerradura '}'")
+        contador_llaves = 0
 
+        for elemento in pila:
+            if elemento == '{':
+                contador_llaves += 1
+            elif elemento == '}':
+                contador_llaves -= 1
+
+        # Verifica si hay desequilibrio en la cantidad de llaves abiertas y cerradas
+        if contador_llaves > 0:
+            print(f"Error: Faltan {contador_llaves} llaves de cerradura '}}'")
+        elif contador_llaves < 0:
+            print(f"Error: Hay {abs(contador_llaves)} llaves de cerradura '}}' de más")
 
     def analizar_expresion(self, expresion):
         """
