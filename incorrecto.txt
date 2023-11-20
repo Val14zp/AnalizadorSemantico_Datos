@@ -1,5 +1,15 @@
 
-x = 40
+int w
+
+int f = 10
+
+string g 
+g = "Hola"
+
+string h
+h = 3
+
+w = 3 + 5 * f
 
 int funcion ( float v , string n ) {
     if ( v > 0.0 ) {
